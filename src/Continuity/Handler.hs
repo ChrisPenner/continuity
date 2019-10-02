@@ -51,3 +51,9 @@ liftHandlerOf :: Monoid r
                -> Handler s subevent r
                -> Handler s event r
 liftHandlerOf p h = mempty & focusing p <>~ h
+
+continuous :: Monad m => m event -> (state -> m ()) -> Animation event state -> m a
+continuous events renderer animation = do
+    renderer $ extract animation
+    evt <- events
+    continuous events renderer (handleEvent evt animation)
